@@ -16,7 +16,7 @@ app.use(logger);
 app.use("/api", mainRoutes);
 
 // SETUP STATIC FILES
-app.use("/", express.static('front-end'));
+/* app.use("/", express.static('front-end')); */
 
 // Run server
 app.listen(port,()=> {
