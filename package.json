@@ -1,4 +1,10 @@
 {
+  "scripts": {
+    "init_tables": "node src/config/createSchema.js && node src/config/initTable.js",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "dotenv": "^16.5.0",

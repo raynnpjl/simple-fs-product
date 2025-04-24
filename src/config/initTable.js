@@ -3,16 +3,6 @@ const db = require("./db.js");
 (async () => {
     try {
         const SQLSTATEMENT = `
-        DROP TABLE IF EXISTS products;
-        CREATE TABLE products (
-            product_id INT AUTO_INCREMENT PRIMARY KEY,
-            product_name TEXT NOT NULL,
-            brand TEXT NOT NULL,
-            FOREIGN KEY (category_id) REFERENCES categories(category_id),
-            image_url TEXT NOT NULL,
-            product_date TIMESTAMP
-        );
-
         DROP TABLE IF EXISTS categories;
         CREATE TABLE categories (
             category_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -20,11 +10,22 @@ const db = require("./db.js");
             category_desc TEXT NOT NULL
         );
 
-        INSERT INTO categories (name, description)
+        INSERT INTO categories (category_name, category_desc)
         VALUES 
             ('food', 'general food'),
             ('toy', 'fun to play with'),
             ('appliance', 'house appliance');
+        
+        DROP TABLE IF EXISTS products;
+        CREATE TABLE products (
+            product_id INT AUTO_INCREMENT PRIMARY KEY,
+            product_name TEXT NOT NULL,
+            brand TEXT NOT NULL,
+            category_id INT NOT NULL,
+            image_url TEXT NOT NULL,
+            product_date TIMESTAMP,
+            FOREIGN KEY (category_id) REFERENCES categories(category_id)
+        );
         `
 
         await db.query(SQLSTATEMENT)

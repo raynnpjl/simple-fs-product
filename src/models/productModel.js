@@ -6,8 +6,8 @@ module.exports = {
         return result;
     },
 
-    async createProduct() {
-        const [result] = await db.query('INSERT INTO products (product_name, brand, category_id, image_url');
+    async createProduct(product_name, brand, category_id, image_url) {
+        const [result] = await db.query('INSERT INTO products (product_name, brand, category_id, image_url) VALUES (?, ?, ?, ?)', [product_name, brand, category_id, image_url]);
         return result.insertId;
     },
 

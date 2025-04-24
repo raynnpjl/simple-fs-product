@@ -40,6 +40,7 @@ module.exports = {
             const image_url = req.body.image_url;
 
             const product_id = await productModel.createProduct(product_name, brand, category_id, image_url);
+            responseView.sendSuccess(res, 'Successfully created product')
         } catch (err) {
             responseView.sendError(res, 'Failed to create product', err);
         }
