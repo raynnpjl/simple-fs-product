@@ -6,7 +6,6 @@ const callback = (responseStatus, responseData) => {
     var counter = 0;
     console.log(responseData.data)
     responseData.data.forEach((product) => {
-        console.log(counter)
         counter++;
         const displayItem = document.createElement("tr");
         displayItem.id = `${counter}`;
