@@ -23,8 +23,7 @@ const db = require("./db.js");
             brand TEXT NOT NULL,
             category_id INT NOT NULL,
             image_url TEXT NOT NULL,
-            product_date TIMESTAMP,
-            FOREIGN KEY (category_id) REFERENCES categories(category_id)
+            product_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         `
 

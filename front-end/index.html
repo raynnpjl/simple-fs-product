@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management System</title>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .tab.active {
+            background-color: #fff;
+            border-bottom: 1px solid #fff;
+            margin-bottom: -1px;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4a5568;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2d3748;
+        }
+
+        /* Delete button styling */
+        button.delete-btn {
+            background-color: #e53e3e;
+        }
+
+        button.delete-btn:hover {
+            background-color: #c53030;
+        }
+
+        /* Confirmation dialog */
+        .confirmation-dialog {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirmation-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .confirmation-buttons button {
+            width: 48%;
+        }
+
+        .confirmation-buttons button.cancel-btn {
+            background-color: #718096;
+        }
+
+        .confirmation-buttons button.confirm-btn {
+            background-color: #e53e3e;
+        }
+
+        /* Product List */
+        .product-list {
+            margin-top: 30px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f8f8f8;
+            font-weight: 600;
+        }
+
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .tab {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+            
+            .product-image {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Product Management System</h1>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="openTab(event, 'product-list-tab')">Product List</div>
+            <div class="tab" onclick="openTab(event, 'create-product-tab')">Create Product</div>
+            <div class="tab" onclick="openTab(event, 'update-product-tab')">Update Product</div>
+            <div class="tab" onclick="openTab(event, 'delete-product-tab')">Delete Product</div>
+        </div>
+        
+        <!-- Product List Tab -->
+        <div id="product-list-tab" class="tab-content active">
+            <h2>Product List</h2>
+            <div class="product-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Brand</th>
+                            <th>Category</th>
+                            <th>Image URL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-table-body">
+                        <!-- Sample product data -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Create Product Tab -->
+        <div id="create-product-tab" class="tab-content">
+            <h2>Create New Product</h2>
+            <form id="create-product-form">
+                <div class="form-group">
+                    <label for="create-product-name">Product Name:</label>
+                    <input type="text" id="create-product-name" name="product_name" required placeholder="Enter product name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="create-brand">Brand:</label>
+                    <input type="text" id="create-brand" name="brand" required placeholder="Enter brand name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="create-category">Category:</label>
+                    <input type="text" id="create-category" name="category" required placeholder="Enter category Id">
+                </div>
+                
+                <div class="form-group">
+                    <label for="create-image-url">Image URL:</label>
+                    <input type="url" id="create-image-url" name="image_url" required placeholder="https://example.com/image.jpg">
+                </div>
+                
+                <button onclick="createProduct(event)">Create Product</button>
+            </form>
+        </div>
+        
+        <!-- Update Product Tab -->
+        <div id="update-product-tab" class="tab-content">
+            <h2>Update Product</h2>
+            <form id="update-product-form">
+                <div class="form-group">
+                    <label for="update-product-id">Product Id:</label>
+                    <input type="text" id="update-product-id" name="product_id" required placeholder="Enter product Id">
+                </div>
+                
+                <div class="form-group">
+                    <label for="update-product-name">Product Name:</label>
+                    <input type="text" id="update-product-name" name="product_name" required placeholder="Enter product name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="update-brand">Brand:</label>
+                    <input type="text" id="update-brand" name="brand" required placeholder="Enter brand name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="update-image-url">Image URL:</label>
+                    <input type="url" id="update-image-url" name="image_url" required placeholder="https://example.com/image.jpg">
+                </div>
+                
+                <button type="submit">Update Product</button>
+            </form>
+        </div>
+        
+        <!-- Delete Product Tab -->
+        <div id="delete-product-tab" class="tab-content">
+            <h2>Delete Product</h2>
+            <form id="delete-product-form">
+                <div class="form-group">
+                    <div class="form-group">
+                        <label for="product-delete">Product to Delete:</label>
+                        <input type="text" id="product-delete" name="product-delete" required placeholder="1">
+                    </div>
+                </div>
+                
+                <div class="form-group" id="delete-product-details" style="display: none;">
+                    <h3>Product Details</h3>
+                    <p><strong>Name:</strong> <span id="delete-product-name"></span></p>
+                    <p><strong>Brand:</strong> <span id="delete-product-brand"></span></p>
+                    <p><strong>Category:</strong> <span id="delete-product-category"></span></p>
+                </div>
+                
+                <button type="submit" class="delete-btn">Delete Product</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Tab functionality
+        function openTab(evt, tabName) {
+            var i, tabContent, tabLinks;
+            
+            // Hide all tab content
+            tabContent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].className = tabContent[i].className.replace(" active", "");
+            }
+            
+            // Remove active class from all tabs
+            tabLinks = document.getElementsByClassName("tab");
+            for (i = 0; i < tabLinks.length; i++) {
+                tabLinks[i].className = tabLinks[i].className.replace(" active", "");
+            }
+            
+            // Show the current tab and add active class
+            document.getElementById(tabName).className += " active";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+    <script src="js/getCurrentURL.js" type="text/javascript"></script>
+    <script src="js/queryCmds.js" type="text/javascript"></script>
+    <script src="js/getAllProduct.js" type="text/javascript"></script>
+    <script src="js/createProduct.js" type="text/javascript"></script>
+</body>
+</html>
